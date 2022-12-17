@@ -1,5 +1,5 @@
 
-export function BFSalgo(grid, startNode, endNode) {
+export function DijkstraAlgo(grid, startNode, endNode) {
 
     const queue = []
     const orderOfVisit = []
@@ -9,6 +9,8 @@ export function BFSalgo(grid, startNode, endNode) {
     const dy = [1, 0, -1, 0]
 // eslint-disable-next-line
     while(queue.length != 0) {
+
+        queue.sort(function(node1, node2){return node1.distance - node2.distance})
 
         const currNode = queue.shift()
 
@@ -27,10 +29,16 @@ export function BFSalgo(grid, startNode, endNode) {
             
             if(checkNewNode(newX, newY, grid)){
                 const node = grid[newY][newX]
-                node.distance = currNode.distance+1
-                node.prevNode = currNode
-                node.isVisited = true
-                queue.push(node)
+                if(grid[newY][newX].isVisited === false){
+                    node.distance = currNode.distance + currNode.weight
+                    node.prevNode = currNode
+                    node.isVisited = true
+                    queue.push(node)
+                }
+                else if(node.distance > (currNode.distance + currNode.weight)){
+                    node.distance = currNode.distance + currNode.weight
+                    node.prevNode = currNode
+                }
             }
         }
     }
@@ -42,14 +50,13 @@ function checkNewNode(newX, newY, grid) {
     if(newX >= 0 && newY >=0
         && newY < grid.length 
         && newX < grid[0].length 
-        && grid[newY][newX].isVisited === false
         && grid[newY][newX].isWall === false)
             return true
     return false
 
 }
 
-export function BFSpath(startNode, endNode) {
+export function DijkstraPath(startNode, endNode) {
 
     const revPath = []
     let newPrev = endNode.prevNode

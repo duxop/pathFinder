@@ -6,41 +6,18 @@ body {
 }
 
 .grid {
+  text-align: right;
   position: relative;
-  margin: 50px auto;
-  font-size: 0;
-}
-
-.navbar {
-  
-  display: flex;
-  align-items: center;
-  height: 65px;
-  background: linear-gradient(90deg, #672280 1.18%, #A626D3 100%);
-  color: white;
-  padding: 20px;
-  
-}
-
-.header {
-  font-size: 33px;
-  font-weight: 700;
-  margin-right: 28%;
-}
-
-.visualize-button {
-  background-color: #5035FF;
-  height: 50px;
-  width: 150px;
-  border: none;
-  border-radius: 6px;
-  color: white;
-  font-size: 1.2rem;
-  font-weight: 300;
+  margin: 30px 15px;
+  font-size: 10px;
   cursor: pointer;
-  font-family: 'Poppins', sans-serif;
-  font-family: 'Unbounded', cursive;
 }
+
+.row {
+  max-width: 100%;
+}
+
+
 
 
 .App {

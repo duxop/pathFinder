@@ -1,5 +1,5 @@
 
-export default function DFSalgo(grid, startNode, endNode) {
+export function DFSalgo(grid, startNode, endNode) {
 
     const stack = []
     const orderOfVisit = []
@@ -9,7 +9,7 @@ export default function DFSalgo(grid, startNode, endNode) {
 
     const dx = [0, 1, 0, -1]
     const dy = [1, 0, -1, 0]
-
+// eslint-disable-next-line
     while(stack.length != 0) {
 
         const currNode = stack[stack.length-1]
@@ -56,5 +56,27 @@ function checkNewNode(newX, newY, grid) {
         && grid[newY][newX].isWall === false)
             return true
     return false
+
+}
+
+
+export function DFSpath(startNode, endNode) {
+
+    const revPath = []
+    let newPrev = endNode.prevNode
+    // eslint-disable-next-line
+    while(newPrev != startNode){
+
+        revPath.push(newPrev)
+        newPrev = newPrev.prevNode
+    }
+    const path = []
+// eslint-disable-next-line
+    while(revPath.length != 0){
+        path.push(revPath[revPath.length-1])
+        revPath.pop()
+    }
+    return path
+
 
 }
