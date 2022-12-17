@@ -107,7 +107,7 @@ export default function PathFinder() {
     function mouseDown(row , col) {
 
         if(!animating){
-            // resetNodes(nodes)
+            resetNodes(nodes)
             if(mouseClicked!=0){
 
             }
