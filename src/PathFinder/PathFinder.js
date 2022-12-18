@@ -1,9 +1,7 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import NavBar from "./Components/Navbar"
 import Node from "./Components/Node"
-// eslint-disable-next-line
 import { BFSalgo, BFSpath} from "./SearchAlgo/BFSalgo"
-// eslint-disable-next-line
 import {DFSalgo, DFSpath} from "./SearchAlgo/DFSalgo"
 import { DijkstraAlgo, DijkstraPath } from "./SearchAlgo/DijkstraAlgo"
 import cloneDeep from "lodash.clonedeep"
@@ -11,14 +9,22 @@ import cloneDeep from "lodash.clonedeep"
 
 export default function PathFinder() {
 
-    const [startNodeRow, changeStartNodeRow] = useState(8)
-    const [endNodeRow, changeEndNodeRow]= useState(8)
-    const [startNodeCol, changeStartNodeCol] = useState(15) 
-    const [endNodeCol, changeEndNodeCol] = useState(35) 
+    const defaultStartR = 8
+    const defaultStartC = 15
+    const defaultEndR = 8
+    const defaultEndC = 35
 
-    let [animating,setAnimation] = useState(false)
+    const [startNodeRow, changeStartNodeRow] = useState(defaultStartR)
+    const [endNodeRow, changeEndNodeRow]= useState(defaultEndR)
+    const [startNodeCol, changeStartNodeCol] = useState(defaultStartC)
+    const [endNodeCol, changeEndNodeCol] = useState(defaultEndC)
+
+    const [animating,setAnimation] = useState(false)
     const [nodes, setNodes] = useState(createGrid())
-    const [mouseClicked, setMouseClicked] = useState(0)  
+    const [mouseClicked, setMouseClicked] = useState(0)
+    const [selectAlgo, setAlgo] = useState("BFS")
+    const [wallOrWeight, changeWallOrWeight] = useState("wall")
+    const [errorVis, setErrorVis] = useState("hidden")
 
     
 
@@ -35,7 +41,7 @@ export default function PathFinder() {
                     isEnd: row===endNodeRow && col===endNodeCol,
                     isWall: false,
                     isPath: false,
-                    weight: ((col===20 || col===21 || col===22 || (col===19 && row===8) || (col===23 && row===8) || (col===24 && row===8)) && row<9? 3 : 1),
+                    weight: 1,
                     isVisited: false,
                     distance: Infinity,
                     prevNode: null
@@ -84,12 +90,28 @@ export default function PathFinder() {
         
         if(!animating){
 
+            setMouseClicked(0)    //if you go out of grid on mouseDown and start animating. The grid will make wall on entering the grid
             resetNodes(nodes)
             const grid = cloneDeep(nodes)
 
-            const visitedNodes = DijkstraAlgo(grid, grid[startNodeRow][startNodeCol], grid[endNodeRow][endNodeCol])
-            const path = DijkstraPath( grid[startNodeRow][startNodeCol], grid[endNodeRow][endNodeCol])
-            
+            var visitedNodes
+            var path
+
+            if(selectAlgo==="BFS"){
+
+                visitedNodes = BFSalgo(grid, grid[startNodeRow][startNodeCol], grid[endNodeRow][endNodeCol])
+                path = BFSpath( grid[startNodeRow][startNodeCol], grid[endNodeRow][endNodeCol])
+                
+            }
+            else if(selectAlgo==="DFS"){
+
+                visitedNodes = DFSalgo(grid, grid[startNodeRow][startNodeCol], grid[endNodeRow][endNodeCol])
+                path = DFSpath( grid[startNodeRow][startNodeCol], grid[endNodeRow][endNodeCol])
+            }
+            else {
+                visitedNodes = DijkstraAlgo(grid, grid[startNodeRow][startNodeCol], grid[endNodeRow][endNodeCol])
+                path = DijkstraPath( grid[startNodeRow][startNodeCol], grid[endNodeRow][endNodeCol])
+            }
             animateBFS(visitedNodes, path)
 
         }
@@ -99,7 +121,7 @@ export default function PathFinder() {
     // setting walls and wights
 
     // mouse clicked----
-    // 0- notclicked 
+    // 0- not clicked 
     // 1- clicked on wall/weight 
     // 2- clicked on startnode 
     // 3- clicked on endNode
@@ -107,17 +129,19 @@ export default function PathFinder() {
     function mouseDown(row , col) {
 
         if(!animating){
-            resetNodes(nodes)
-            if(mouseClicked!=0){
 
-            }
+            resetNodes(nodes)
             if(nodes[row][col].isStart || nodes[row][col].isEnd){
                 moveStartEndNodes(row, col)
             }
             else {
                 setMouseClicked(1)  
-                console.log("clicked")
-                nodes[row][col].isWall = !nodes[row][col].isWall;
+                // console.log("clicked")
+                if(wallOrWeight === "wall")
+                    nodes[row][col].isWall = !nodes[row][col].isWall;
+                else if(wallOrWeight === "weight" && selectAlgo === "Dijkstra"){
+                    nodes[row][col].weight = nodes[row][col].weight === 3 ? 1:3;
+                }
                 setNodes(cloneDeep(nodes))
             }
             
@@ -144,15 +168,20 @@ export default function PathFinder() {
         if(!animating){
             
             console.log("clicked")
-            if(mouseClicked==1){
+            if(mouseClicked===1){
                 resetNodes(nodes)
-                nodes[row][col].isWall = !nodes[row][col].isWall;
+                if(!nodes[row][col].isStart && !nodes[row][col].isEnd){  //only make wall if is not start or end   
+                    if(wallOrWeight === "wall")
+                        nodes[row][col].isWall = !nodes[row][col].isWall;
+                    else if(wallOrWeight === "weight" && selectAlgo === "Dijkstra")
+                        nodes[row][col].weight = nodes[row][col].weight === 3 ? 1:3;
+                }
             }
-            else if(mouseClicked==2){
+            else if(mouseClicked===2){
                 resetNodes(nodes)
                 nodes[row][col].isStart = true
             }
-            else if(mouseClicked==3){
+            else if(mouseClicked===3){
                 resetNodes(nodes)
                 nodes[row][col].isEnd = true
             }
@@ -162,10 +191,10 @@ export default function PathFinder() {
     }
 
     function mouseLeave(row, col){
-        if(mouseClicked==2)
+        if(mouseClicked===2)
             nodes[row][col].isStart = false
         
-        else if(mouseClicked==3)
+        else if(mouseClicked===3)
             nodes[row][col].isEnd = false
         
         setNodes(cloneDeep(nodes))
@@ -175,13 +204,12 @@ export default function PathFinder() {
     function mouseUp(row, col) {
 
         if(!animating){
-            if(mouseClicked==2){
+            if(mouseClicked===2){
                 nodes[row][col].isStart = true
                 changeStartNodeRow(row)
                 changeStartNodeCol(col)
-
             }
-            if(mouseClicked==3){
+            if(mouseClicked===3){
                 nodes[row][col].isEnd = true
                 changeEndNodeRow(row)
                 changeEndNodeCol(col)
@@ -194,17 +222,79 @@ export default function PathFinder() {
 
     // to reset(visited and path nodes)before animating again
 
+    
+    function handleChangesAlgo(event){
+        
+        if(!animating){
+            setAlgo(event.target.value)
+            resetNodes(nodes)
+            resetWeights()
+            
+        }
+        
+    }
+
+    function handleChangesWalls(event){
+
+        if(!animating){
+
+            changeWallOrWeight(event.target.checked ? "weight" : "wall")
+
+            resetNodes(nodes)
+        }
+
+    }
+
+
     function resetNodes(nodes) {
 
         for(let row=0; row<20; ++row){   
             for(let col=0; col<48; ++col){
-
                 nodes[row][col].isVisited = false
                 nodes[row][col].isPath = false
             }
         }
 
     }
+
+    function resetWallsAndWeight() {
+
+        resetWalls()
+        resetWeights()
+
+    }
+    
+    function resetWalls() {
+
+        for(let row=0; row<20; ++row){   
+            for(let col=0; col<48; ++col){
+                nodes[row][col].isWall = false
+            }
+        }
+        setNodes(cloneDeep(nodes))
+        
+    }
+
+    function resetWeights() {
+
+        for(let row=0; row<20; ++row){   
+            for(let col=0; col<48; ++col){
+                nodes[row][col].weight = 1
+            }
+        }
+        setNodes(cloneDeep(nodes))
+        
+    }
+
+    useEffect(()=> {
+        console.log(wallOrWeight)
+        if(selectAlgo!='Dijkstra' && wallOrWeight==="weight")
+            setErrorVis('visible')
+        else    
+            setErrorVis('hidden')
+
+    },[selectAlgo, wallOrWeight])
+
 
     // jsx grid elements(20 rows and 48 columns)
     
@@ -233,7 +323,13 @@ export default function PathFinder() {
 
     return(
         <div className="main">
-            <NavBar visualise = {visualiseBFS}/>
+            <NavBar 
+                visualise = {visualiseBFS}
+                handleChangesAlgo = {handleChangesAlgo}
+                resetWallsAndWeight = {resetWallsAndWeight}
+                handleChangesWalls = {handleChangesWalls}
+            />
+            <p className="errorMess" style={{visibility: errorVis }}>{selectAlgo} does not consider weights</p>
             <div className="grid">
                 {gridComponent}
             </div>

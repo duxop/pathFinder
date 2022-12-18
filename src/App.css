@@ -8,8 +8,9 @@ body {
 .grid {
   text-align: right;
   position: relative;
-  margin: 30px 15px;
-  font-size: 10px;
+  margin-right:15px;
+  margin-left: 15px;
+  font-size: 0px;
   cursor: pointer;
 }
 

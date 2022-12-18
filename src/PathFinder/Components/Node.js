@@ -8,7 +8,7 @@ export default function Node(prop) {
      : prop.isPath ? "path"
      : prop.isWall ? "wall"
      : prop.isVisited ? "visited"
-     : prop.weight === 2 ? "weight"
+     : prop.weight === 3 ? "weight"
      : ""
 
     return (
@@ -17,7 +17,7 @@ export default function Node(prop) {
             onMouseEnter={prop.mouseEnter}
             onMouseUp={prop.mouseUp}
             onMouseLeave={prop.mouseLeave}>
-                <p>{prop.weight}</p>
+                {/* <p>{prop.weight}</p> */}
         </div>
     )
 }

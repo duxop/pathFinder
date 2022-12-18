@@ -13,10 +13,10 @@
     background-color: green;
   }
 
-  /* .weight {
-    background-image : url(../../../public/weight.jpeg) 25px;
+  .weight {
+    background-color: brown;
     
-  } */
+  }
 
   .wall {
     background-color: rgb(0, 0, 0);
