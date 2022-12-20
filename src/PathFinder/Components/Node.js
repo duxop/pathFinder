@@ -9,16 +9,19 @@ export default function Node(prop) {
      : prop.isPath ? "path"
      : prop.isWall ? "wall"
      : prop.isVisited ? "visited"
-     : prop.weight === 3 ? "weight"
      : ""
-
+    const showImage = prop.weight===5 
+                        && !prop.isEnd 
+                        && !prop.isStart 
+                        && !prop.isMid 
+                        && !prop.isWall
     return (
         <div className={`node ${moreClasses}`} 
             onMouseDown={prop.mouseDown} 
             onMouseEnter={prop.mouseEnter}
             onMouseUp={prop.mouseUp}
             onMouseLeave={prop.mouseLeave}>
-                {/* <p>{prop.weight}</p> */}
+                {showImage && <img className='image' src={require('../../illust58-5797-01-removebg-preview.png')}></img>}
         </div>
     )
 }

@@ -128,8 +128,6 @@ export default function PathFinder() {
 
             const start = grid1[startNodeRow][startNodeCol]
             let mid = considerMid ? grid1[midNodeRow][midNodeCol] : grid1[endNodeRow][endNodeCol]
-            // mid.isEnd = true
-            // mid.isStart = true
             const end = grid2[endNodeRow][endNodeCol]
 
             var visitedNodes1
@@ -148,19 +146,22 @@ export default function PathFinder() {
                 path2 = BFSpath( mid, end)
                 
             }
-            // else if(selectAlgo==="DFS"){
+            else if(selectAlgo==="DFS"){
 
-            //     visitedNodes1 = DFSalgo(grid, start, mid)
-            //     path1 = DFSpath( start, mid)
-            //     visitedNodes2 = DFSalgo(grid, mid , end)
-            //     path2 = DFSpath( mid, end)
-            // }
-            // else {
-            //     visitedNodes1 = DijkstraAlgo(grid, start, mid)
-            //     path1 = DijkstraPath( start, mid)
-            //     visitedNodes2 = DijkstraAlgo(grid, mid , end)
-            //     path2 = DijkstraPath( mid, end)
-            // }
+                visitedNodes1 = DFSalgo(grid1, start, mid,)
+                path1 = DFSpath( start, mid)
+                mid = considerMid ? grid2[midNodeRow][midNodeCol] : grid2[endNodeRow][endNodeCol]
+                visitedNodes2 = DFSalgo(grid2, mid , end)
+                path2 = DFSpath( mid, end)
+            }
+            else {
+
+                visitedNodes1 = DijkstraAlgo(grid1, start, mid,)
+                path1 = DijkstraPath( start, mid)
+                mid = considerMid ? grid2[midNodeRow][midNodeCol] : grid2[endNodeRow][endNodeCol]
+                visitedNodes2 = DijkstraAlgo(grid2, mid , end)
+                path2 = DijkstraPath( mid, end)
+            }
             animate(visitedNodes1, path1, visitedNodes2, path2)
 
         }
@@ -190,7 +191,7 @@ export default function PathFinder() {
                 if(wallOrWeight === "wall")
                     nodes[row][col].isWall = !nodes[row][col].isWall;
                 else if(wallOrWeight === "weight" && selectAlgo === "Dijkstra"){
-                    nodes[row][col].weight = nodes[row][col].weight === 3 ? 1:3;
+                    nodes[row][col].weight = nodes[row][col].weight === 5 ? 1:5;
                 }
                 setNodes(cloneDeep(nodes))
             }
@@ -229,7 +230,7 @@ export default function PathFinder() {
                     if(wallOrWeight === "wall")
                         nodes[row][col].isWall = !nodes[row][col].isWall;
                     else if(wallOrWeight === "weight" && selectAlgo === "Dijkstra")
-                        nodes[row][col].weight = nodes[row][col].weight === 3 ? 1:3;
+                        nodes[row][col].weight = nodes[row][col].weight === 5 ? 1:5;
                 }
             }
             else if(mouseClicked===2){

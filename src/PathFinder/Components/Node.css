@@ -17,19 +17,15 @@
     background-color: green;
   }
 
-
-  .weight {
-    background-color: brown;
+  .image {
+    height : 30px;
+    width: 30px;
     
   }
 
   .wall {
     background-color: rgb(0, 0, 0);
   }
-
-  /* .visited {
-    background-color: blue;
-  } */
 
   .visited {
     background-color: orange;
