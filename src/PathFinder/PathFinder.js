@@ -92,7 +92,7 @@ export default function PathFinder() {
                 console.log(nodes[path1[k].row][path1[k].col].distance)
                 setNodes(cloneDeep(nodes))
 
-            },15*(visitedNodes1.length + visitedNodes2.length + k))
+            },15*(visitedNodes1.length + visitedNodes2.length) + 45*k)
             
         } 
         for( let l = 0; l < path2.length; ++l){
@@ -102,7 +102,7 @@ export default function PathFinder() {
                 console.log(nodes[path2[l].row][path2[l].col].distance)
                 setNodes(cloneDeep(nodes))
 
-            },15*(visitedNodes1.length + visitedNodes2.length + path1.length + l))
+            },15*(visitedNodes1.length + visitedNodes2.length) + 45*(path1.length + l))
             
         } 
         setTimeout(()=> {
