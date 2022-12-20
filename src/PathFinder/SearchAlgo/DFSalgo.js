@@ -69,7 +69,7 @@ export function DFSpath(startNode, endNode) {
     const revPath = []
     let newPrev = endNode.prevNode
     // eslint-disable-next-line
-    while(newPrev != startNode){
+    while(newPrev != startNode && newPrev !=null){
 
         revPath.push(newPrev)
         newPrev = newPrev.prevNode
