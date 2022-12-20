@@ -9,9 +9,14 @@
     background-color: red;
   }
 
+  .mid {
+    background-color: blue;
+  }
+
   .end {
     background-color: green;
   }
+
 
   .weight {
     background-color: brown;

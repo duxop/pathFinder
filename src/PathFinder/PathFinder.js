@@ -13,11 +13,17 @@ export default function PathFinder() {
     const defaultStartC = 15
     const defaultEndR = 8
     const defaultEndC = 35
+    const defaultMidR = 8
+    const defaultMidC = 25
+
 
     const [startNodeRow, changeStartNodeRow] = useState(defaultStartR)
     const [endNodeRow, changeEndNodeRow]= useState(defaultEndR)
     const [startNodeCol, changeStartNodeCol] = useState(defaultStartC)
     const [endNodeCol, changeEndNodeCol] = useState(defaultEndC)
+    const [midNodeRow, changeMidNodeRow] = useState(defaultMidR)
+    const [midNodeCol, changeMidNodeCol] = useState(defaultMidR)
+
 
     const [animating,setAnimation] = useState(false)
     const [nodes, setNodes] = useState(createGrid())
@@ -25,6 +31,8 @@ export default function PathFinder() {
     const [selectAlgo, setAlgo] = useState("BFS")
     const [wallOrWeight, changeWallOrWeight] = useState("wall")
     const [errorVis, setErrorVis] = useState("hidden")
+    const [nodeErrorVis, setNodeErrorVis] = useState(false)
+    const [considerMid, changeConsiderMid] = useState(false)
 
     
 
@@ -39,6 +47,7 @@ export default function PathFinder() {
                     col: col,
                     isStart: row===startNodeRow && col===startNodeCol,
                     isEnd: row===endNodeRow && col===endNodeCol,
+                    isMid: false,
                     isWall: false,
                     isPath: false,
                     weight: 1,
@@ -52,36 +61,52 @@ export default function PathFinder() {
         return node
     }
 
-    function animateBFS(visitedNodes, path) {
-        // const dis = nodes[nodes.length-1].distance+1
-        // console.log(dis)
+    function animate(visitedNodes1, path1, visitedNodes2, path2) {
 
-        
         setAnimation(true)
-        for( let i = 0; i < visitedNodes.length; ++i){
+        for( let i = 0; i < visitedNodes1.length; ++i){
             setTimeout(()=> {
                 
-                nodes[visitedNodes[i].row][visitedNodes[i].col] = visitedNodes[i]
+                nodes[visitedNodes1[i].row][visitedNodes1[i].col] = visitedNodes1[i]
                 setNodes(cloneDeep(nodes))
-                // reRender(render => render+1)
+                console.log("done")
 
             },15*i)
             
         } 
-        for( let j = 0; j < path.length; ++j){
+        for( let j = 0; j < visitedNodes2.length; ++j){
+            setTimeout(()=> {
+                
+                nodes[visitedNodes2[j].row][visitedNodes2[j].col] = visitedNodes2[j]
+                setNodes(cloneDeep(nodes))
+                console.log("done")
+
+            },15*(visitedNodes1.length + j))
+            
+        }
+        for( let k = 0; k < path1.length; ++k){
             setTimeout(()=> {
 
-                nodes[path[j].row][path[j].col].isPath = true
-                console.log(nodes[path[j].row][path[j].col].distance)
+                nodes[path1[k].row][path1[k].col].isPath = true
+                console.log(nodes[path1[k].row][path1[k].col].distance)
                 setNodes(cloneDeep(nodes))
-                // reRender(render => render+1)
 
-            },15*(visitedNodes.length) + 15*j)
+            },15*(visitedNodes1.length + visitedNodes2.length + k))
+            
+        } 
+        for( let l = 0; l < path2.length; ++l){
+            setTimeout(()=> {
+
+                nodes[path2[l].row][path2[l].col].isPath = true
+                console.log(nodes[path2[l].row][path2[l].col].distance)
+                setNodes(cloneDeep(nodes))
+
+            },15*(visitedNodes1.length + visitedNodes2.length + path1.length + l))
             
         } 
         setTimeout(()=> {
             setAnimation(false)
-        }, 15*(visitedNodes.length) + 15*(path.length))
+        }, 15*(visitedNodes1.length + visitedNodes2.length + path1.length + path2.length))
 
     }
 
@@ -90,29 +115,53 @@ export default function PathFinder() {
         
         if(!animating){
 
+            if(mouseClicked>=2){
+                setNodeErrorVis(true)
+                return
+            }
+            setNodeErrorVis(false)
             setMouseClicked(0)    //if you go out of grid on mouseDown and start animating. The grid will make wall on entering the grid
             resetNodes(nodes)
-            const grid = cloneDeep(nodes)
+            let grid1 = cloneDeep(nodes)
+            let grid2 = cloneDeep(nodes)
 
-            var visitedNodes
-            var path
+
+            const start = grid1[startNodeRow][startNodeCol]
+            let mid = considerMid ? grid1[midNodeRow][midNodeCol] : grid1[endNodeRow][endNodeCol]
+            // mid.isEnd = true
+            // mid.isStart = true
+            const end = grid2[endNodeRow][endNodeCol]
+
+            var visitedNodes1
+            var path1
+            var visitedNodes2
+            var path2
+
+            
 
             if(selectAlgo==="BFS"){
 
-                visitedNodes = BFSalgo(grid, grid[startNodeRow][startNodeCol], grid[endNodeRow][endNodeCol])
-                path = BFSpath( grid[startNodeRow][startNodeCol], grid[endNodeRow][endNodeCol])
+                visitedNodes1 = BFSalgo(grid1, start, mid,)
+                path1 = BFSpath( start, mid)
+                mid = considerMid ? grid2[midNodeRow][midNodeCol] : grid2[endNodeRow][endNodeCol]
+                visitedNodes2 = BFSalgo(grid2, mid , end)
+                path2 = BFSpath( mid, end)
                 
             }
-            else if(selectAlgo==="DFS"){
+            // else if(selectAlgo==="DFS"){
 
-                visitedNodes = DFSalgo(grid, grid[startNodeRow][startNodeCol], grid[endNodeRow][endNodeCol])
-                path = DFSpath( grid[startNodeRow][startNodeCol], grid[endNodeRow][endNodeCol])
-            }
-            else {
-                visitedNodes = DijkstraAlgo(grid, grid[startNodeRow][startNodeCol], grid[endNodeRow][endNodeCol])
-                path = DijkstraPath( grid[startNodeRow][startNodeCol], grid[endNodeRow][endNodeCol])
-            }
-            animateBFS(visitedNodes, path)
+            //     visitedNodes1 = DFSalgo(grid, start, mid)
+            //     path1 = DFSpath( start, mid)
+            //     visitedNodes2 = DFSalgo(grid, mid , end)
+            //     path2 = DFSpath( mid, end)
+            // }
+            // else {
+            //     visitedNodes1 = DijkstraAlgo(grid, start, mid)
+            //     path1 = DijkstraPath( start, mid)
+            //     visitedNodes2 = DijkstraAlgo(grid, mid , end)
+            //     path2 = DijkstraPath( mid, end)
+            // }
+            animate(visitedNodes1, path1, visitedNodes2, path2)
 
         }
 
@@ -125,14 +174,15 @@ export default function PathFinder() {
     // 1- clicked on wall/weight 
     // 2- clicked on startnode 
     // 3- clicked on endNode
+    // 4- mid node
 
     function mouseDown(row , col) {
 
         if(!animating){
 
             resetNodes(nodes)
-            if(nodes[row][col].isStart || nodes[row][col].isEnd){
-                moveStartEndNodes(row, col)
+            if(nodes[row][col].isStart || nodes[row][col].isEnd || nodes[row][col].isMid){
+                moveStartMidEndNodes(row, col)
             }
             else {
                 setMouseClicked(1)  
@@ -149,17 +199,22 @@ export default function PathFinder() {
 
     }
 
-    function moveStartEndNodes( row , col){
+    function moveStartMidEndNodes( row , col){
 
         if(nodes[row][col].isStart){
             setMouseClicked(2)
             nodes[row][col].isStart = false
         }
             
-        else {
+        else if(nodes[row][col].isEnd){
             setMouseClicked(3)
             nodes[row][col].isEnd = false
         }   
+
+        else {
+            setMouseClicked(4)
+            nodes[row][col].isMid = false
+        }
             
     }
 
@@ -170,7 +225,7 @@ export default function PathFinder() {
             console.log("clicked")
             if(mouseClicked===1){
                 resetNodes(nodes)
-                if(!nodes[row][col].isStart && !nodes[row][col].isEnd){  //only make wall if is not start or end   
+                if(!nodes[row][col].isStart && !nodes[row][col].isEnd && !nodes[row][col].isMid){  //only make wall if is not start or end   
                     if(wallOrWeight === "wall")
                         nodes[row][col].isWall = !nodes[row][col].isWall;
                     else if(wallOrWeight === "weight" && selectAlgo === "Dijkstra")
@@ -185,6 +240,10 @@ export default function PathFinder() {
                 resetNodes(nodes)
                 nodes[row][col].isEnd = true
             }
+            else if(mouseClicked===4){
+                resetNodes(nodes)
+                nodes[row][col].isMid = true
+            }
             setNodes(cloneDeep(nodes))
 
         }        
@@ -196,6 +255,9 @@ export default function PathFinder() {
         
         else if(mouseClicked===3)
             nodes[row][col].isEnd = false
+        
+        else if(mouseClicked===4)
+        nodes[row][col].isMid = false
         
         setNodes(cloneDeep(nodes))
 
@@ -213,6 +275,11 @@ export default function PathFinder() {
                 nodes[row][col].isEnd = true
                 changeEndNodeRow(row)
                 changeEndNodeCol(col)
+            }
+            if(mouseClicked===4){
+                nodes[row][col].isMid = true
+                changeMidNodeRow(row)
+                changeMidNodeCol(col)
             }
             setNodes(cloneDeep(nodes))
             setMouseClicked(0)
@@ -286,9 +353,46 @@ export default function PathFinder() {
         
     }
 
+    function addRemoveMidNode(){
+
+        if(nodes[midNodeRow][midNodeCol].isMid){
+            nodes[midNodeRow][midNodeCol].isMid = false
+            changeConsiderMid(false)
+            console.log("remove")
+
+        }
+        else {
+
+            if(nodes[defaultMidR][defaultMidC].isStart || nodes[defaultMidR][defaultMidC].isEnd){
+
+                if( nodes[defaultMidR][defaultMidC+1].isStart || nodes[defaultMidR][defaultMidC+1].isEnd){
+                    nodes[defaultMidR+1][defaultMidC].isMid = true
+                    changeMidNodeRow(defaultMidR+1)
+                    changeMidNodeCol(defaultMidC)
+                }
+                else {
+                    nodes[defaultMidR][defaultMidC+1].isMid = true
+                    changeMidNodeRow(defaultMidR)
+                    changeMidNodeCol(defaultMidC+1)
+                }
+                
+            }      
+            else {
+                nodes[defaultMidR][defaultMidC].isMid = true
+                changeMidNodeRow(defaultMidR)
+                changeMidNodeCol(defaultMidC)
+            }
+            
+            changeConsiderMid(true)
+            console.log("add")
+        }
+        setNodes(cloneDeep(nodes))
+
+    }
+
     useEffect(()=> {
         console.log(wallOrWeight)
-        if(selectAlgo!='Dijkstra' && wallOrWeight==="weight")
+        if(selectAlgo!=='Dijkstra' && wallOrWeight==="weight")
             setErrorVis('visible')
         else    
             setErrorVis('hidden')
@@ -307,6 +411,7 @@ export default function PathFinder() {
                         row= {node.row} 
                         isStart= {node.isStart} 
                         isEnd= {node.isEnd}
+                        isMid= {node.isMid}
                         isWall= {node.isWall}
                         isVisited= {node.isVisited}
                         isPath= {node.isPath}
@@ -328,8 +433,11 @@ export default function PathFinder() {
                 handleChangesAlgo = {handleChangesAlgo}
                 resetWallsAndWeight = {resetWallsAndWeight}
                 handleChangesWalls = {handleChangesWalls}
+                addNode = {addRemoveMidNode}
             />
-            <p className="errorMess" style={{visibility: errorVis }}>{selectAlgo} does not consider weights</p>
+            {!nodeErrorVis && <p className="errorMess" style={{visibility: errorVis }}>{selectAlgo} does not consider weights</p>}
+            {nodeErrorVis && <p>First place the node on grid</p>}
+
             <div className="grid">
                 {gridComponent}
             </div>

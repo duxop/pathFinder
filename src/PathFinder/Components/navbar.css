@@ -16,7 +16,7 @@
     margin-right: 40px;
   }
   
-  .visualize-button, .reset-button{
+  .visualize-button, .reset-button, .add-button{
     align-self: center;
     height: 50px;
     width: 120px;

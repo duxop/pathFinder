@@ -23,6 +23,7 @@ export default function NavBar(prop) {
                         </label>
                         <p>Add Weight</p>
                     </div>
+                    <button className="add-button" onClick={prop.addNode}>Add a Node</button>
                     <button className="visualize-button" onClick={prop.visualise}> Visualize </button>
                     <button className="reset-button" onClick={prop.resetWallsAndWeight}> Reset </button>
                     

@@ -15,11 +15,15 @@ export function DFSalgo(grid, startNode, endNode) {
         const currNode = stack[stack.length-1]
         stack.pop()
 
+
         if(currNode === endNode)
             return orderOfVisit
         // console.log(currNode)
+
         currNode.isVisited = true
-        orderOfVisit.push(currNode)
+
+        if(!orderOfVisit.includes(currNode))
+            orderOfVisit.push(currNode)
 
         const currX = currNode.col
         const currY = currNode.row

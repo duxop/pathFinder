@@ -5,6 +5,7 @@ export default function Node(prop) {
 
     let moreClasses = prop.isStart ? "start"
      : prop.isEnd ? "end" 
+     : prop.isMid ? "mid"
      : prop.isPath ? "path"
      : prop.isWall ? "wall"
      : prop.isVisited ? "visited"
