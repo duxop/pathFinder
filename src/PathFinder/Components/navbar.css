@@ -38,6 +38,10 @@
     background-color: rgb(225, 40, 40);
   }
 
+  .add-button{
+    background-color: orange;
+  }
+
   .form {
     display: flex;
     align-items: center;

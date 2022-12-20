@@ -434,6 +434,7 @@ export default function PathFinder() {
                 resetWallsAndWeight = {resetWallsAndWeight}
                 handleChangesWalls = {handleChangesWalls}
                 addNode = {addRemoveMidNode}
+                addNodeButton = {considerMid}
             />
             {!nodeErrorVis && <p className="errorMess" style={{visibility: errorVis }}>{selectAlgo} does not consider weights</p>}
             {nodeErrorVis && <p>First place the node on grid</p>}
