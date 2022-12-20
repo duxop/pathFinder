@@ -6,8 +6,10 @@ export default function Node(prop) {
     let moreClasses = prop.isStart ? "start"
      : prop.isEnd ? "end" 
      : prop.isMid ? "mid"
+     : prop.isPath2 ? "path2"
      : prop.isPath ? "path"
      : prop.isWall ? "wall"
+     : prop.isVisited2 ? "visited2"
      : prop.isVisited ? "visited"
      : ""
     const showImage = prop.weight===5 

@@ -50,8 +50,10 @@ export default function PathFinder() {
                     isMid: false,
                     isWall: false,
                     isPath: false,
+                    isPath2: false,
                     weight: 1,
                     isVisited: false,
+                    isVisited2: false,
                     distance: Infinity,
                     prevNode: null
                 })
@@ -69,7 +71,6 @@ export default function PathFinder() {
                 
                 nodes[visitedNodes1[i].row][visitedNodes1[i].col] = visitedNodes1[i]
                 setNodes(cloneDeep(nodes))
-                console.log("done")
 
             },15*i)
             
@@ -78,8 +79,8 @@ export default function PathFinder() {
             setTimeout(()=> {
                 
                 nodes[visitedNodes2[j].row][visitedNodes2[j].col] = visitedNodes2[j]
+                nodes[visitedNodes2[j].row][visitedNodes2[j].col].isVisited2 = true
                 setNodes(cloneDeep(nodes))
-                console.log("done")
 
             },15*(visitedNodes1.length + j))
             
@@ -97,7 +98,7 @@ export default function PathFinder() {
         for( let l = 0; l < path2.length; ++l){
             setTimeout(()=> {
 
-                nodes[path2[l].row][path2[l].col].isPath = true
+                nodes[path2[l].row][path2[l].col].isPath2 = true
                 console.log(nodes[path2[l].row][path2[l].col].distance)
                 setNodes(cloneDeep(nodes))
 
@@ -319,7 +320,9 @@ export default function PathFinder() {
         for(let row=0; row<20; ++row){   
             for(let col=0; col<48; ++col){
                 nodes[row][col].isVisited = false
+                nodes[row][col].isVisited2 = false
                 nodes[row][col].isPath = false
+                nodes[row][col].isPath2 = false
             }
         }
 
@@ -415,7 +418,9 @@ export default function PathFinder() {
                         isMid= {node.isMid}
                         isWall= {node.isWall}
                         isVisited= {node.isVisited}
+                        isVisited2= {node.isVisited2}
                         isPath= {node.isPath}
+                        isPath2= {node.isPath2}
                         weight= {node.weight}
                         mouseDown = {() =>mouseDown(node.row, node.col)}
                         mouseUp = {() =>mouseUp(node.row, node.col)}
