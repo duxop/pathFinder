@@ -234,15 +234,15 @@ export default function PathFinder() {
                         nodes[row][col].weight = nodes[row][col].weight === 5 ? 1:5;
                 }
             }
-            else if(mouseClicked===2){
+            else if(mouseClicked===2 && nodes[row][col].weight===1){
                 resetNodes(nodes)
                 nodes[row][col].isStart = true
             }
-            else if(mouseClicked===3){
+            else if(mouseClicked===3 && nodes[row][col].weight===1){
                 resetNodes(nodes)
                 nodes[row][col].isEnd = true
             }
-            else if(mouseClicked===4){
+            else if(mouseClicked===4 && nodes[row][col].weight===1){
                 resetNodes(nodes)
                 nodes[row][col].isMid = true
             }
@@ -287,6 +287,14 @@ export default function PathFinder() {
             setMouseClicked(0)
         }
 
+    }
+
+    function mouseClick(row, col){
+
+        if(!animating){
+            if(wallOrWeight === "weight" && selectAlgo === "Dijkstra")
+                nodes[row][col].weight = nodes[row][col].weight === 5 ? 1:5;
+        }
     }
 
     // to reset(visited and path nodes)before animating again
@@ -426,6 +434,7 @@ export default function PathFinder() {
                         mouseUp = {() =>mouseUp(node.row, node.col)}
                         mouseEnter = {() =>mouseEnter(node.row, node.col)}
                         mouseLeave = {() =>mouseLeave(node.row, node.col)}
+                        mouseClick= {() => mouseClick(node.row, node.col)}
                     />
                 ))}
             </div>

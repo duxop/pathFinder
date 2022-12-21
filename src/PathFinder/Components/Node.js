@@ -22,7 +22,8 @@ export default function Node(prop) {
             onMouseDown={prop.mouseDown} 
             onMouseEnter={prop.mouseEnter}
             onMouseUp={prop.mouseUp}
-            onMouseLeave={prop.mouseLeave}>
+            onMouseLeave={prop.mouseLeave}
+            onClick={prop.mouseClick}>
                 {showImage && <img className='image' src={require('../../illust58-5797-01-removebg-preview.png')}></img>}
         </div>
     )
